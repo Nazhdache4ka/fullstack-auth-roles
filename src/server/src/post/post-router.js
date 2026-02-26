@@ -19,4 +19,8 @@ router.post('/posts/:postId/comment', authMiddleware, commentController.createCo
 
 router.get('/posts/:postId/comments', authMiddleware, commentController.fetchCommentsByPostId);
 
+router.put('/posts/:postId/comments', authMiddleware, commentController.editComment);
+
+router.delete('/posts/:postId/comments/:commentId', authMiddleware, commentController.deleteComment);
+
 module.exports = router;

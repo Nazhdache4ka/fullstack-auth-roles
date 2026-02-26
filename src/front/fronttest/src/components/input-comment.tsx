@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { TextField, Button, Box, Alert, Snackbar } from '@mui/material';
+import { TextField, Button, Box } from '@mui/material';
 import CommentService from '../api/comment-service';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
+import { ErrorAlert } from './error-alert';
 
 export function InputComment() {
   const { id: postId } = useParams();
@@ -53,20 +54,11 @@ export function InputComment() {
           Add Comment
         </Button>
       </Box>
-      <Snackbar
+      <ErrorAlert
         open={openSnackbar}
-        autoHideDuration={3000}
+        message={errorMessage}
         onClose={handleCloseSnackbar}
-      >
-        <Alert
-          severity="error"
-          variant="filled"
-          sx={{ width: '100%' }}
-          onClose={handleCloseSnackbar}
-        >
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+      />
     </>
   );
 }

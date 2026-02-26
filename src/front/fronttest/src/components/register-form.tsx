@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { TextField, Button, Box, Typography, Alert, Snackbar } from '@mui/material';
+import { TextField, Button, Box, Typography } from '@mui/material';
 import { useAuthStore } from '../store/use-auth-store';
 import { useMutation } from '@tanstack/react-query';
 import authService from '../api/auth-service';
 import { useNavigate } from 'react-router-dom';
 import type { AxiosError } from 'axios';
 import type { IAuthResponse } from '../interface';
+import { ErrorAlert } from './error-alert';
 
 export function RegisterForm() {
   const [username, setUsername] = useState<string>('');
@@ -82,20 +83,11 @@ export function RegisterForm() {
       >
         Register
       </Button>
-      <Snackbar
+      <ErrorAlert
         open={openSnackbar}
-        autoHideDuration={3000}
+        message={errorMessage}
         onClose={handleCloseSnackbar}
-      >
-        <Alert
-          severity="error"
-          variant="filled"
-          sx={{ width: '100%' }}
-          onClose={handleCloseSnackbar}
-        >
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+      />
     </Box>
   );
 }

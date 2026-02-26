@@ -18,11 +18,12 @@ export interface IUser {
 
 export interface IComment {
   id: number;
-  postId: number;
-  userId: number;
+  post_id: number;
+  user_id: number;
   username: string;
   content: string;
-  isEdited: boolean;
+  is_edited: number;
+  role: string;
 }
 
 export interface IAuthResponse {
