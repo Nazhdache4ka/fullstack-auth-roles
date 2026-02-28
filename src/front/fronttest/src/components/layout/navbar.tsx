@@ -1,15 +1,15 @@
-import { useAuthStore } from '../store/use-auth-store';
+import { useAuthStore } from '../../store/use-auth-store';
 import { Link, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, Container, Box, Avatar } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import authService from '../api/auth-service';
-import { UserRole } from '../interface';
+import { AuthService } from '../../api/auth-service';
+import { UserRole } from '../../interface';
 
 export function Navbar() {
   const { isAuth, user, setIsAuth, setUser } = useAuthStore();
   const navigate = useNavigate();
   const { mutate: logout, isPending } = useMutation({
-    mutationFn: () => authService.logout(),
+    mutationFn: () => AuthService.logout(),
     onSuccess: () => {
       setIsAuth(false);
       setUser(null);

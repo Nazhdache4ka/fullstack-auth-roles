@@ -3,8 +3,8 @@ import type { IPost } from '../interface';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-class PostService {
-  async fetchAllPosts(limit: number = 10, offset: number): Promise<IPost[] | null> {
+export class PostService {
+  static async fetchAllPosts(limit: number = 10, offset: number): Promise<IPost[] | null> {
     try {
       const response = await axios.get(`${BACKEND_URL}/posts?limit=${limit}&offset=${offset}`);
       return response.data;
@@ -14,7 +14,7 @@ class PostService {
     }
   }
 
-  async fetchPostById(id: number): Promise<IPost | null> {
+  static async fetchPostById(id: number): Promise<IPost | null> {
     try {
       const response = await axios.get(`${BACKEND_URL}/posts/${id}`);
       return response.data;
@@ -24,7 +24,7 @@ class PostService {
     }
   }
 
-  async deletePost(id: number): Promise<boolean> {
+  static async deletePost(id: number): Promise<boolean> {
     try {
       await axios.delete(`${BACKEND_URL}/posts/${id}`);
       return true;
@@ -34,7 +34,7 @@ class PostService {
     }
   }
 
-  async createPost(author: string, title: string, content: string): Promise<boolean> {
+  static async createPost(author: string, title: string, content: string): Promise<boolean> {
     try {
       await axios.post(`${BACKEND_URL}/posts`, { author, title, content });
       return true;
@@ -44,7 +44,7 @@ class PostService {
     }
   }
 
-  async updatePost(id: number, author: string, title: string, content: string): Promise<boolean> {
+  static async updatePost(id: number, author: string, title: string, content: string): Promise<boolean> {
     try {
       await axios.put(`${BACKEND_URL}/posts`, { id, author, title, content });
       return true;
@@ -54,5 +54,3 @@ class PostService {
     }
   }
 }
-
-export default new PostService();

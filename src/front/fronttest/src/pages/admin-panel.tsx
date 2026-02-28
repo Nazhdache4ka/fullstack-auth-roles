@@ -1,16 +1,17 @@
 import { Layout, UserCompound } from '../components';
 import { useAuthStore } from '../store/use-auth-store';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import UserService from '../api/user-service';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { UserService } from '../api/user-service';
 import { UserRole } from '../interface';
-import { useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Navigate } from 'react-router-dom';
 import { Avatar, Box, Card, CardActions, Stack, Typography } from '@mui/material';
+import { useInvalidators } from '../api/hooks';
 
 export function AdminPanel() {
   const { user: currentUser } = useAuthStore();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+
+  const { invalidateUsers } = useInvalidators();
 
   const { data: users } = useQuery({
     queryKey: ['admin-users'],
@@ -21,7 +22,7 @@ export function AdminPanel() {
   const { mutate: setRole } = useMutation({
     mutationFn: ({ userId, roleId }: { userId: number; roleId: number }) => UserService.setUserRole(userId, roleId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      invalidateUsers();
     },
     onError: (error) => {
       console.log(error);
@@ -33,18 +34,16 @@ export function AdminPanel() {
     return users?.data?.filter((user) => user.id !== currentUser?.id);
   }, [currentUser, users]);
 
-  useEffect(() => {
-    if (currentUser?.role !== UserRole.ADMIN) {
-      navigate('/');
-    }
-  }, [currentUser, navigate]);
-
   const handleSetRole = (role: string, userId: number) => {
     const roleId = role === UserRole.ADMIN ? 1 : 2;
     setRole({ userId, roleId });
   };
 
   const emoji = '\u{1F607}';
+
+  if (currentUser?.role !== UserRole.ADMIN) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <Layout>

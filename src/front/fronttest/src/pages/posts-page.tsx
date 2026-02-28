@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardActions, Stack } from '@mui/material';
 import { ModalCreatePost, ModalUpdatePost, PostCompound, Layout } from '../components';
-import PostService from '../api/post-service';
+import { PostService } from '../api/post-service';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInvalidators } from '../api/hooks';
 

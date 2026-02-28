@@ -1,19 +1,22 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Stack, Card, CardContent, Typography, Box, Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CommentService from '../api/comment-service';
+import { CommentService } from '../../api/comment-service';
 import { useParams } from 'react-router-dom';
-import { useAuthStore } from '../store/use-auth-store';
-import { ModalCommentUpdate } from './modal-comment-update';
-import { UserRole, type IComment } from '../interface';
+import { useAuthStore } from '../../store/use-auth-store';
+import { ModalCommentUpdate } from '../modal/modal-comment-update';
+import { UserRole, type IComment } from '../../interface';
 import type { AxiosError } from 'axios';
-import { ErrorAlert } from './error-alert';
+import { ErrorAlert } from '../layout/error-alert';
+import { useInvalidators } from '../../api/hooks';
 
 export function Comments() {
   const { id: postId } = useParams();
+
   const { user: currentUser } = useAuthStore();
-  const queryClient = useQueryClient();
+
+  const { invalidateComments } = useInvalidators();
 
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('Failed to delete comment');
@@ -29,7 +32,7 @@ export function Comments() {
   const { mutate: deleteComment, isPending } = useMutation({
     mutationFn: (commentId: number) => CommentService.deleteComment(Number(postId), commentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', Number(postId)] });
+      invalidateComments(Number(postId));
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       const message = error.response?.data?.message ?? 'Failed to delete comment';

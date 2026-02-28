@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Modal, Box, TextField, Button } from '@mui/material';
-import '../modal.css';
-import PostService from '../api/post-service';
+import '../../modal.css';
+import { PostService } from '../../api/post-service';
 import { useQuery } from '@tanstack/react-query';
 
 interface ModalUpdatePostProps {

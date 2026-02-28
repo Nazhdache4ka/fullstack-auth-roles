@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
-import CommentService from '../api/comment-service';
+import { CommentService } from '../../api/comment-service';
 import { useParams } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
-import { ErrorAlert } from './error-alert';
+import { ErrorAlert } from '../layout/error-alert';
+import { useInvalidators } from '../../api/hooks';
 
 export function InputComment() {
   const { id: postId } = useParams();
@@ -12,12 +13,13 @@ export function InputComment() {
   const [errorMessage, setErrorMessage] = useState<string>('Failed to create comment');
   const [comment, setComment] = useState<string>('');
 
-  const queryClient = useQueryClient();
+  const { invalidateComments } = useInvalidators();
+
   const { mutate: createComment, isPending } = useMutation({
     mutationFn: () => CommentService.createComment(Number(postId), comment),
     onSuccess: () => {
       setComment('');
-      queryClient.invalidateQueries({ queryKey: ['comments', Number(postId)] });
+      invalidateComments(Number(postId));
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       const message = error.response?.data?.message ?? 'Failed to create comment';
