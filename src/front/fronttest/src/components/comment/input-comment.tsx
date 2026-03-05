@@ -1,40 +1,18 @@
 import { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
-import { CommentService } from '../../api/comment-service';
-import { useParams } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
 import { ErrorAlert } from '../layout/error-alert';
-import { useInvalidators } from '../../api/hooks';
+import { useInputComment } from './hooks/use-input-comment';
 
 export function InputComment() {
-  const { id: postId } = useParams();
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('Failed to create comment');
   const [comment, setComment] = useState<string>('');
 
-  const { invalidateComments } = useInvalidators();
-
-  const { mutate: createComment, isPending } = useMutation({
-    mutationFn: () => CommentService.createComment(Number(postId), comment),
-    onSuccess: () => {
-      setComment('');
-      invalidateComments(Number(postId));
-    },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      const message = error.response?.data?.message ?? 'Failed to create comment';
-      setErrorMessage(message);
-      setOpenSnackbar(true);
-    },
+  const { errorMessage, openSnackbar, isPending, createComment, handleCloseSnackbar } = useInputComment({
+    onSuccess: () => setComment(''),
   });
 
   const handleCreateComment = () => {
     if (!comment) return;
-    createComment();
-  };
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
+    createComment(comment);
   };
 
   return (

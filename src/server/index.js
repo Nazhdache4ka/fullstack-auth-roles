@@ -24,10 +24,6 @@ app.use('/api', postRouter);
 app.use('/api', userRouter);
 app.use('/api/auth', authRouter);
 
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Backend is running' });
-});
-
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
