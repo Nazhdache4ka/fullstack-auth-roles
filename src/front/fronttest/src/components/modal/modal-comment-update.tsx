@@ -1,11 +1,8 @@
 import { useState } from 'react';
 import { Modal, Box, TextField, Button } from '@mui/material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
-import CommentService from '../api/comment-service';
-import { useParams } from 'react-router-dom';
-import '../modal.css';
-import { ErrorAlert } from './error-alert';
+import '../../modal.css';
+import { ErrorAlert } from '../layout/error-alert';
+import { useCommentModal } from './hooks/use-comment-modal';
 
 interface ModalCommentUpdateProps {
   openUpdate: boolean;
@@ -15,34 +12,16 @@ interface ModalCommentUpdateProps {
 }
 
 export function ModalCommentUpdate({ openUpdate, commentId, initialContent, onClose }: ModalCommentUpdateProps) {
-  const { id: postId } = useParams();
-
   const [content, setContent] = useState<string>(initialContent);
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('Failed to update comment');
 
-  const queryClient = useQueryClient();
-  const { mutate: updateComment, isPending } = useMutation({
-    mutationFn: () => CommentService.editComment(Number(postId), content, commentId),
-    onSuccess: () => {
-      setContent('');
-      queryClient.invalidateQueries({ queryKey: ['comments', Number(postId)] });
-      onClose();
-    },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      const message = error.response?.data?.message ?? 'Failed to update comment';
-      setErrorMessage(message);
-      setOpenSnackbar(true);
-    },
+  const { errorMessage, openSnackbar, isPending, updateComment, handleCloseSnackbar } = useCommentModal({
+    onSuccess: onClose,
   });
 
   const handleUpdateComment = () => {
     if (!content) return;
-    updateComment();
-  };
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
+    updateComment({ content, commentId });
+    onClose();
   };
 
   return (

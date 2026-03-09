@@ -1,42 +1,18 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Stack, Card, CardContent, Typography, Box, Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CommentService from '../api/comment-service';
-import { useParams } from 'react-router-dom';
-import { useAuthStore } from '../store/use-auth-store';
-import { ModalCommentUpdate } from './modal-comment-update';
-import { UserRole, type IComment } from '../interface';
-import type { AxiosError } from 'axios';
-import { ErrorAlert } from './error-alert';
+import { useAuthStore } from '../../store/use-auth-store';
+import { ModalCommentUpdate } from '../modal/modal-comment-update';
+import { UserRole, type IComment } from '../../interface';
+import { ErrorAlert } from '../layout/error-alert';
+import { useComment } from './hooks/use-comment';
 
 export function Comments() {
-  const { id: postId } = useParams();
   const { user: currentUser } = useAuthStore();
-  const queryClient = useQueryClient();
-
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('Failed to delete comment');
 
   const [editingComment, setEditingComment] = useState<IComment | null>(null);
 
-  const { data: comments } = useQuery({
-    queryKey: ['comments', Number(postId)],
-    queryFn: () => CommentService.fetchCommentsByPostId(Number(postId)),
-    enabled: !!postId && !Number.isNaN(Number(postId)),
-  });
-
-  const { mutate: deleteComment, isPending } = useMutation({
-    mutationFn: (commentId: number) => CommentService.deleteComment(Number(postId), commentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', Number(postId)] });
-    },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      const message = error.response?.data?.message ?? 'Failed to delete comment';
-      setErrorMessage(message);
-      setOpenSnackbar(true);
-    },
-  });
+  const { commentData, isPending, openSnackbar, errorMessage, deleteComment, handleCloseSnackbar } = useComment();
 
   const handleOpenUpdate = (com: IComment) => {
     setEditingComment(com);
@@ -50,10 +26,6 @@ export function Comments() {
     deleteComment(commentId);
   };
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
-
   return (
     <Stack
       direction="column"
@@ -61,7 +33,7 @@ export function Comments() {
       padding={4}
     >
       <h2>Comments</h2>
-      {comments?.map((com) => {
+      {commentData?.map((com) => {
         return (
           <Card
             key={com.id}

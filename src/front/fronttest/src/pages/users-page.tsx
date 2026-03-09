@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Layout, UserCompound } from '../components';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import UserService from '../api/user-service';
+import { UserService } from '../api/user-service';
 import { Stack, Card, Button } from '@mui/material';
 
 const LIMIT = 10;

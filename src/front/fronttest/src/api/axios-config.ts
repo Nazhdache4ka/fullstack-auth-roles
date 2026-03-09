@@ -1,15 +1,14 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
-import authService from './auth-service';
+import { AuthService } from './auth-service';
 import { useAuthStore } from '../store/use-auth-store';
 
 const isAuthUrl = (url = '') => /\/auth\/(login|register|refresh|logout)(\?|$)/.test(url);
 
 let refreshPromise: Promise<string> | null = null;
 
-function doRefresh(): Promise<string> {
+async function doRefresh(): Promise<string> {
   if (refreshPromise) return refreshPromise;
-  refreshPromise = authService
-    .refresh()
+  refreshPromise = AuthService.refresh()
     .then((res) => {
       const token = res.data.accessToken;
       localStorage.setItem('accessToken', token);
@@ -66,20 +65,6 @@ export function setupAxiosInterceptors() {
         window.location.href = '/login';
         return Promise.reject(error);
       }
-    }
-  );
-
-  axios.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      if (
-        error.response?.status === 403 &&
-        (error.config.url?.includes('/users/info') || error.config.url?.includes('/users/role'))
-      ) {
-        window.location.href = '/';
-        return Promise.reject(error);
-      }
-      return Promise.reject(error);
     }
   );
 }

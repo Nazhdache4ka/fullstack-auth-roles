@@ -4,7 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button, Card, CardActions, Stack } from '@mui/material';
 import { PostCompound, ModalUpdatePost, PostItemProvider, Layout, Comments, InputComment } from '../components';
 import { useInvalidators } from '../api/hooks';
-import PostService from '../api/post-service';
+import { PostService } from '../api/post-service';
 
 export function PostPage() {
   const { id: postId } = useParams();

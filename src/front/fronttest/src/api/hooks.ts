@@ -11,5 +11,13 @@ export const useInvalidators = () => {
     queryClient.invalidateQueries({ queryKey: ['post', id] });
   };
 
-  return { invalidatePosts, invalidatePost };
+  const invalidateComments = (postId: number) => {
+    queryClient.invalidateQueries({ queryKey: ['comments', postId] });
+  };
+
+  const invalidateUsers = () => {
+    queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+  };
+
+  return { invalidatePosts, invalidatePost, invalidateComments, invalidateUsers };
 };

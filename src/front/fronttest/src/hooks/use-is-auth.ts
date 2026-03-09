@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import authService from '../api/auth-service';
+import { AuthService } from '../api/auth-service';
 import { useAuthStore } from '../store/use-auth-store';
 
 export function useIsAuth() {
@@ -16,7 +16,7 @@ export function useIsAuth() {
 
     (async () => {
       try {
-        const res = await authService.refresh();
+        const res = await AuthService.refresh();
         setIsAuth(true);
         setUser(res.data.user);
         localStorage.setItem('accessToken', res.data.accessToken);

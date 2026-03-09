@@ -31,7 +31,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div>
+      <>
         <Routes>
           <Route
             path="/register"
@@ -76,7 +76,7 @@ function App() {
             }
           />
         </Routes>
-      </div>
+      </>
 
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

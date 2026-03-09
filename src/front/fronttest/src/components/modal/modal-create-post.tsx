@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Modal, Box, TextField, Button } from '@mui/material';
-import '../modal.css';
+import '../../modal.css';
 
 interface ModalCreatePostProps {
   open: boolean;
